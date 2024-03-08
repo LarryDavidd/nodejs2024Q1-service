@@ -1,13 +1,5 @@
+import { User } from '@/utils/types';
 import { Injectable, NotFoundException } from '@nestjs/common';
-
-export interface User {
-  id: string;
-  login: string;
-  password: string;
-  version: number;
-  createdAt: number;
-  updatedAt: number;
-}
 
 @Injectable()
 export class StoreService {

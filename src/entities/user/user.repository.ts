@@ -2,15 +2,7 @@ import { v4 as uuid } from 'uuid';
 import { Injectable } from '@nestjs/common';
 import { StoreService } from '@/store/user/store.service';
 import { CreateUserDto } from './dto/create-user.dto';
-
-export interface User {
-  id: string;
-  login: string;
-  password: string;
-  version: number;
-  createdAt: number;
-  updatedAt: number;
-}
+import { User } from '@/utils/types';
 
 @Injectable()
 export class UserRepository {
