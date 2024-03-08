@@ -3,12 +3,7 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Injectable } from '@nestjs/common';
 import { StoreService } from '@/store/artist/store.service';
-
-export interface Artist {
-  id: string;
-  name: string;
-  grammy: boolean;
-}
+import { Artist } from '@/utils/types';
 
 @Injectable()
 export class ArtistRepository {

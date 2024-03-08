@@ -9,37 +9,37 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { ArtistService } from './track.service';
-import { CreateArtistDto } from './dto/create-track.dto';
+import { TrackService } from './track.service';
+import { CreateTrackDto } from './dto/create-track.dto';
 
-@Controller('artist')
-export class ArtistController {
-  constructor(private readonly artistService: ArtistService) {}
+@Controller('track')
+export class TrackController {
+  constructor(private readonly trackService: TrackService) {}
 
   @Get()
   getAll() {
-    return this.artistService.getArtists();
+    return this.trackService.getTracks();
   }
 
   @Get(':id')
   getOne(@Param('id') id: string) {
-    return this.artistService.getArtist(id);
+    return this.trackService.getTrack(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() body: CreateArtistDto) {
-    return this.artistService.createArtist(body);
+  create(@Body() body: CreateTrackDto) {
+    return this.trackService.createTrack(body);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() body: CreateArtistDto) {
-    return this.artistService.updateArtist(id, body);
+  update(@Param('id') id: string, @Body() body: CreateTrackDto) {
+    return this.trackService.updateTrack(id, body);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   delete(@Param('id') id: string) {
-    return this.artistService.deleteArtist(id);
+    return this.trackService.deleteTrack(id);
   }
 }

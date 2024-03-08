@@ -1,37 +1,37 @@
 import { Injectable } from '@nestjs/common';
-import { ArtistRepository } from './track.repository';
-import { CreateArtistDto } from './dto/create-track.dto';
-import { UpdateArtistDto } from './dto/update-track.dto';
+import { TrackRepository } from './track.repository';
+import { CreateTrackDto } from './dto/create-track.dto';
+import { UpdateTrackDto } from './dto/update-track.dto';
 import isValidId from '@/utils/isValidId';
 
 @Injectable()
-export class ArtistService {
-  constructor(private readonly artistRepository: ArtistRepository) {}
+export class TrackService {
+  constructor(private readonly trackRepository: TrackRepository) {}
 
-  getArtists() {
-    return this.artistRepository.getArtists();
+  getTracks() {
+    return this.trackRepository.getTracks();
   }
 
-  getArtist(id: string) {
+  getTrack(id: string) {
     isValidId(id);
-    const artist = this.artistRepository.getArtist(id);
+    const track = this.trackRepository.getTrack(id);
 
-    return artist;
+    return track;
   }
 
-  createArtist(artistData: CreateArtistDto) {
-    return this.artistRepository.createArtist(artistData);
+  createTrack(trackData: CreateTrackDto) {
+    return this.trackRepository.createTrack(trackData);
   }
 
-  updateArtist(id: string, artistData: UpdateArtistDto) {
-    isValidId(id);
-
-    return this.artistRepository.updateArtistInfo(id, artistData);
-  }
-
-  deleteArtist(id: string) {
+  updateTrack(id: string, trackData: UpdateTrackDto) {
     isValidId(id);
 
-    return this.artistRepository.deleteArtist(id);
+    return this.trackRepository.updateTrackInfo(id, trackData);
+  }
+
+  deleteTrack(id: string) {
+    isValidId(id);
+
+    return this.trackRepository.deleteTrack(id);
   }
 }

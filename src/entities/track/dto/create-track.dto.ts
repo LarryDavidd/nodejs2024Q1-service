@@ -1,8 +1,12 @@
-import { IsBoolean, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateArtistDto {
+export class CreateTrackDto {
+  @IsNotEmpty()
   @IsString()
   name: string;
-  @IsBoolean()
-  grammy: boolean;
+  artistId?: string | null;
+  albumId?: string | null;
+  @IsInt()
+  @IsNotEmpty()
+  duration: number;
 }

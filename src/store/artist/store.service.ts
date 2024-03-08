@@ -1,10 +1,5 @@
+import { Artist } from '@/utils/types';
 import { Injectable } from '@nestjs/common';
-
-export interface Artist {
-  id: string;
-  name: string;
-  grammy: boolean;
-}
 
 @Injectable()
 export class StoreService {

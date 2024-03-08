@@ -1,48 +1,47 @@
 import { v4 as uuid } from 'uuid';
-import { CreateArtistDto } from './dto/create-track.dto';
-import { UpdateArtistDto } from './dto/update-track.dto';
+import { CreateTrackDto } from './dto/create-track.dto';
+import { UpdateTrackDto } from './dto/update-track.dto';
 import { Injectable } from '@nestjs/common';
-import { StoreService } from '@/store/artist/store.service';
-
-export interface Artist {
-  id: string;
-  name: string;
-  grammy: boolean;
-}
+import { StoreService } from '@/store/track/store.service';
+import { Track } from '@/utils/types';
 
 @Injectable()
-export class ArtistRepository {
+export class TrackRepository {
   constructor(private readonly storeService: StoreService) {}
 
-  getArtists(): Artist[] {
-    return this.storeService.getArtists();
+  getTracks(): Track[] {
+    return this.storeService.getTracks();
   }
 
-  getArtist(id: string): Artist {
-    return this.storeService.getArtist(id);
+  getTrack(id: string): Track {
+    return this.storeService.getTrack(id);
   }
 
-  createArtist(artistData: CreateArtistDto): Artist {
-    const newArtist: Artist = {
+  createTrack(trackData: CreateTrackDto): Track {
+    const newTrack: Track = {
       id: uuid(),
-      name: artistData.name,
-      grammy: artistData.grammy,
+      name: trackData.name,
+      artistId: trackData.artistId,
+      albumId: trackData.albumId,
+      duration: trackData.duration,
     };
-    this.storeService.createArtist(newArtist);
-    return newArtist;
+    this.storeService.createTrack(newTrack);
+    return newTrack;
   }
 
-  updateArtistInfo(id: string, artistData: UpdateArtistDto): Artist {
-    const artist: Artist = {
+  updateTrackInfo(id: string, trackData: UpdateTrackDto): Track {
+    const track: Track = {
       id,
-      name: artistData.name,
-      grammy: artistData.grammy,
+      name: trackData.name,
+      artistId: trackData.artistId,
+      albumId: trackData.albumId,
+      duration: trackData.duration,
     };
-    this.storeService.updateArtist(artist);
-    return artist;
+    this.storeService.updateTrack(track);
+    return track;
   }
 
-  deleteArtist(id: string): boolean {
-    return this.storeService.deleteArtist(id);
+  deleteTrack(id: string): boolean {
+    return this.storeService.deleteTrack(id);
   }
 }
