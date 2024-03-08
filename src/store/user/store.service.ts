@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 export interface User {
   id: string;
@@ -22,7 +22,9 @@ export class StoreService {
   }
 
   getUser(id: string) {
-    return this.store.find((user) => user.id === id);
+    const user = this.store.find((user) => user.id === id);
+    if (!user) throw new NotFoundException('User not found');
+    return user;
   }
 
   createUser(user: User) {

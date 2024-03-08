@@ -1,13 +1,9 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { isUUID } from 'class-validator';
+import { getHashPassword, isPasswordCorrect } from '@/utils/hash';
+import isValidId from '@/utils/isValidId';
 
 @Injectable()
 export class UserService {
@@ -22,50 +18,39 @@ export class UserService {
   }
 
   getUser(id: string) {
-    this.isValidId(id);
-    const user = this.isUserExist(id);
+    isValidId(id);
+    const user = this.userRepository.getUser(id);
 
     const { password, ...userInfo } = user;
     return userInfo;
   }
 
-  createUser(userData: CreateUserDto) {
+  async createUser(userData: CreateUserDto) {
+    userData.password = await getHashPassword(userData.password);
     const { password, ...userInfo } = this.userRepository.createUser(userData);
     return userInfo;
   }
 
-  updateUserPassword(
+  async updateUserPassword(
     id: string,
     { oldPassword, newPassword }: UpdatePasswordDto,
   ) {
-    this.isValidId(id);
-    const user = this.isUserExist(id);
+    isValidId(id);
+    const user = this.userRepository.getUser(id);
 
-    if (user.password !== oldPassword)
+    if (await isPasswordCorrect(oldPassword, user.password))
       throw new ForbiddenException('Wrong password');
 
     const { password, ...userInfo } = this.userRepository.updateUserPassword(
       id,
-      newPassword,
+      await getHashPassword(newPassword),
     );
     return userInfo;
   }
 
   deleteUser(id: string) {
-    this.isValidId(id);
-    this.isUserExist(id);
+    isValidId(id);
 
     return this.userRepository.deleteUser(id);
-  }
-
-  isValidId(id: string) {
-    if (!isUUID(id))
-      throw new BadRequestException(`User id ${id} is not valid`);
-  }
-
-  isUserExist(id: string) {
-    const user = this.userRepository.getUser(id);
-    if (!user) throw new NotFoundException('User not found');
-    return user;
   }
 }
