@@ -5,12 +5,6 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 import isValidId from '@/utils/isValidId';
 import { Album } from '@/utils/types';
 
-// interface Album {
-//   id: string; // uuid v4
-//   name: string;
-//   year: number;
-//   artistId: string | null; // refers to Artist
-// }
 @Injectable()
 export class AlbumService {
   constructor(private readonly albumRepository: AlbumRepository) {}
