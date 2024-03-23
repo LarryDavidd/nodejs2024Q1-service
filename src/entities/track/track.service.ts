@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { TrackRepository } from './track.repository';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
@@ -8,30 +8,38 @@ import isValidId from '@/utils/isValidId';
 export class TrackService {
   constructor(private readonly trackRepository: TrackRepository) {}
 
-  getTracks() {
-    return this.trackRepository.getTracks();
+  async getTracks() {
+    return await this.trackRepository.getTracks();
   }
 
-  getTrack(id: string) {
+  async getTrack(id: string) {
     isValidId(id);
-    const track = this.trackRepository.getTrack(id);
+    const track = await this.getTrackIfExist(id);
 
     return track;
   }
 
-  createTrack(trackData: CreateTrackDto) {
-    return this.trackRepository.createTrack(trackData);
+  async createTrack(trackData: CreateTrackDto) {
+    return await this.trackRepository.createTrack(trackData);
   }
 
-  updateTrack(id: string, trackData: UpdateTrackDto) {
+  async updateTrack(id: string, trackData: UpdateTrackDto) {
     isValidId(id);
+    this.getTrackIfExist(id);
 
     return this.trackRepository.updateTrackInfo(id, trackData);
   }
 
-  deleteTrack(id: string) {
+  async deleteTrack(id: string) {
     isValidId(id);
+    await this.getTrackIfExist(id);
 
     return this.trackRepository.deleteTrack(id);
+  }
+
+  private async getTrackIfExist(id: string) {
+    const track = await this.trackRepository.getTrack(id);
+    if (!track) throw new NotFoundException(`Track with id ${id} not found`);
+    return track;
   }
 }
