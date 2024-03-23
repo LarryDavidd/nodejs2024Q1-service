@@ -1,38 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { AlbumRepository } from './album.repository';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import isValidId from '@/utils/isValidId';
-import { Album } from '@/utils/types';
 
 @Injectable()
 export class AlbumService {
   constructor(private readonly albumRepository: AlbumRepository) {}
 
-  getAlbums(): Album[] {
-    return this.albumRepository.getAlbums();
+  async getAlbums() {
+    return await this.albumRepository.getAlbums();
   }
 
-  getAlbum(id: string): Album {
+  async getAlbum(id: string) {
     isValidId(id);
-    const album = this.albumRepository.getAlbum(id);
+    const album = await this.albumRepository.getAlbum(id);
 
     return album;
   }
 
-  createAlbum(albumData: CreateAlbumDto): Album {
-    return this.albumRepository.createAlbum(albumData);
+  async createAlbum(albumData: CreateAlbumDto) {
+    return await this.albumRepository.createAlbum(albumData);
   }
 
-  updateAlbum(id: string, albumData: UpdateAlbumDto): Album {
+  async updateAlbum(id: string, albumData: UpdateAlbumDto) {
     isValidId(id);
+    await this.getAlbumIfExist(id);
 
     return this.albumRepository.updateAlbum(id, albumData);
   }
 
-  deleteAlbum(id: string) {
+  async deleteAlbum(id: string) {
     isValidId(id);
+    await this.getAlbumIfExist(id);
 
     return this.albumRepository.deleteAlbum(id);
+  }
+
+  private async getAlbumIfExist(id: string) {
+    const album = await this.albumRepository.getAlbum(id);
+    if (!album) throw new NotFoundException(`Album ${id} not found`);
+    return album;
   }
 }
