@@ -1,43 +1,29 @@
-import { v4 as uuid } from 'uuid';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Injectable } from '@nestjs/common';
-import { StoreService } from '@/store/artist/store.service';
-import { Artist } from '@/utils/types';
+import { PrismaService } from '@/entities/prisma/prisma.service';
 
 @Injectable()
 export class ArtistRepository {
-  constructor(private readonly storeService: StoreService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  getArtists(): Artist[] {
-    return this.storeService.getArtists();
+  async getArtists() {
+    return await this.prisma.artist.findMany();
   }
 
-  getArtist(id: string): Artist {
-    return this.storeService.getArtist(id);
+  async getArtist(id: string) {
+    return await this.prisma.artist.findUnique({ where: { id } });
   }
 
-  createArtist(artistData: CreateArtistDto): Artist {
-    const newArtist: Artist = {
-      id: uuid(),
-      name: artistData.name,
-      grammy: artistData.grammy,
-    };
-    this.storeService.createArtist(newArtist);
-    return newArtist;
+  async createArtist(artistData: CreateArtistDto) {
+    return await this.prisma.artist.create({ data: artistData });
   }
 
-  updateArtistInfo(id: string, artistData: UpdateArtistDto): Artist {
-    const artist: Artist = {
-      id,
-      name: artistData.name,
-      grammy: artistData.grammy,
-    };
-    this.storeService.updateArtist(artist);
-    return artist;
+  async updateArtistInfo(id: string, artistData: UpdateArtistDto) {
+    return await this.prisma.artist.update({ where: { id }, data: artistData });
   }
 
-  deleteArtist(id: string): boolean {
-    return this.storeService.deleteArtist(id);
+  async deleteArtist(id: string) {
+    return await this.prisma.artist.delete({ where: { id } });
   }
 }
