@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ArtistRepository } from './artist.repository';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import isValidId from '@/utils/isValidId';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class ArtistService {
@@ -13,7 +17,7 @@ export class ArtistService {
   }
 
   async getArtist(id: string) {
-    isValidId(id);
+    this.isValidId(id);
     return this.getArtistIfExist(id);
   }
 
@@ -22,14 +26,14 @@ export class ArtistService {
   }
 
   async updateArtist(id: string, artistData: UpdateArtistDto) {
-    isValidId(id);
+    this.isValidId(id);
     await this.getArtistIfExist(id);
 
     return this.artistRepository.updateArtistInfo(id, artistData);
   }
 
   async deleteArtist(id: string) {
-    isValidId(id);
+    this.isValidId(id);
     this.getArtistIfExist(id);
 
     return this.artistRepository.deleteArtist(id);
@@ -40,4 +44,8 @@ export class ArtistService {
     if (!artist) throw new NotFoundException('Artist not found');
     return artist;
   }
+
+  private isValidId = (id: string) => {
+    if (!isUUID(id)) throw new BadRequestException(`Invalid id ${id}`);
+  };
 }

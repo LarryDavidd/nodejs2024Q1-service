@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { AlbumRepository } from './album.repository';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import isValidId from '@/utils/isValidId';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class AlbumService {
@@ -13,7 +17,7 @@ export class AlbumService {
   }
 
   async getAlbum(id: string) {
-    isValidId(id);
+    this.isValidId(id);
     const album = await this.albumRepository.getAlbum(id);
 
     return album;
@@ -24,14 +28,14 @@ export class AlbumService {
   }
 
   async updateAlbum(id: string, albumData: UpdateAlbumDto) {
-    isValidId(id);
+    this.isValidId(id);
     await this.getAlbumIfExist(id);
 
     return this.albumRepository.updateAlbum(id, albumData);
   }
 
   async deleteAlbum(id: string) {
-    isValidId(id);
+    this.isValidId(id);
     await this.getAlbumIfExist(id);
 
     return this.albumRepository.deleteAlbum(id);
@@ -42,4 +46,8 @@ export class AlbumService {
     if (!album) throw new NotFoundException(`Album ${id} not found`);
     return album;
   }
+
+  private isValidId = (id: string) => {
+    if (!isUUID(id)) throw new BadRequestException(`Invalid id ${id}`);
+  };
 }

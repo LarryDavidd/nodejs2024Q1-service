@@ -1,10 +1,11 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { FavoritesRepository } from './favorites.repository';
-import isValidId from '@/utils/isValidId';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class FavoritesService {
@@ -15,7 +16,7 @@ export class FavoritesService {
   }
 
   async addArtistToFavorites(id: string) {
-    isValidId(id);
+    this.isValidId(id);
 
     const artist = (await this.favoritesRepository.getArtists()).find(
       (artist) => artist.id === id,
@@ -27,7 +28,7 @@ export class FavoritesService {
   }
 
   async addAlbumToFavorites(id: string) {
-    isValidId(id);
+    this.isValidId(id);
 
     const album = (await this.favoritesRepository.getAlbums()).find(
       (album) => album.id === id,
@@ -39,7 +40,7 @@ export class FavoritesService {
   }
 
   async addTrackToFavorites(id: string) {
-    isValidId(id);
+    this.isValidId(id);
 
     const track = (await this.favoritesRepository.getTracks()).find(
       (track) => track.id === id,
@@ -51,7 +52,7 @@ export class FavoritesService {
   }
 
   async deleteArtistFromFavorites(id: string) {
-    isValidId(id);
+    this.isValidId(id);
 
     const artist = (await this.favoritesRepository.getFavoritesArtists()).find(
       (artist) => artist.id === id,
@@ -62,7 +63,7 @@ export class FavoritesService {
   }
 
   async deleteAlbumFromFavorites(id: string) {
-    isValidId(id);
+    this.isValidId(id);
 
     const album = (await this.favoritesRepository.getFavoritesAlbums()).find(
       (album) => album.id === id,
@@ -73,7 +74,7 @@ export class FavoritesService {
   }
 
   async deleteTrackFromFavorites(id: string) {
-    isValidId(id);
+    this.isValidId(id);
 
     const track = (await this.favoritesRepository.getFavoritesTracks()).find(
       (track) => track.id === id,
@@ -82,4 +83,8 @@ export class FavoritesService {
 
     return await this.favoritesRepository.deleteTrackFromFavorites(id);
   }
+
+  private isValidId = (id: string) => {
+    if (!isUUID(id)) throw new BadRequestException(`Invalid id ${id}`);
+  };
 }

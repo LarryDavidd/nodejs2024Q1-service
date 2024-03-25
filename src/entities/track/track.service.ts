@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { TrackRepository } from './track.repository';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import isValidId from '@/utils/isValidId';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class TrackService {
@@ -13,7 +17,7 @@ export class TrackService {
   }
 
   async getTrack(id: string) {
-    isValidId(id);
+    this.isValidId(id);
     const track = await this.getTrackIfExist(id);
 
     return track;
@@ -24,14 +28,14 @@ export class TrackService {
   }
 
   async updateTrack(id: string, trackData: UpdateTrackDto) {
-    isValidId(id);
+    this.isValidId(id);
     this.getTrackIfExist(id);
 
     return this.trackRepository.updateTrackInfo(id, trackData);
   }
 
   async deleteTrack(id: string) {
-    isValidId(id);
+    this.isValidId(id);
     await this.getTrackIfExist(id);
 
     return this.trackRepository.deleteTrack(id);
@@ -42,4 +46,8 @@ export class TrackService {
     if (!track) throw new NotFoundException(`Track with id ${id} not found`);
     return track;
   }
+
+  private isValidId = (id: string) => {
+    if (!isUUID(id)) throw new BadRequestException(`Invalid id ${id}`);
+  };
 }

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -7,7 +8,7 @@ import { UserRepository } from './user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { getHashPassword, isPasswordCorrect } from '@/utils/hash';
-import isValidId from '@/utils/isValidId';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class UserService {
@@ -30,7 +31,7 @@ export class UserService {
   }
 
   async getUser(id: string) {
-    isValidId(id);
+    this.isValidId(id);
     const user = await this.checkUserExists(id);
 
     return this.getUserWithoutPassword(user);
@@ -52,7 +53,7 @@ export class UserService {
     id: string,
     { oldPassword, newPassword }: UpdatePasswordDto,
   ) {
-    isValidId(id);
+    this.isValidId(id);
     const user = await this.checkUserExists(id);
 
     if (await isPasswordCorrect(oldPassword, user.password))
@@ -66,9 +67,13 @@ export class UserService {
   }
 
   async deleteUser(id: string) {
-    isValidId(id);
+    this.isValidId(id);
     await this.checkUserExists(id);
 
     return this.userRepository.deleteUser(id);
   }
+
+  private isValidId = (id: string) => {
+    if (!isUUID(id)) throw new BadRequestException(`Invalid id ${id}`);
+  };
 }
