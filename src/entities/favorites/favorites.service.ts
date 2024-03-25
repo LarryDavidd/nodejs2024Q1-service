@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { FavoritesRepository } from './favorites.repository';
 import isValidId from '@/utils/isValidId';
 
@@ -17,9 +13,9 @@ export class FavoritesService {
   addArtistToFavorites(id: string) {
     isValidId(id);
 
-    const artist = this.favoritesRepository.getArtist(id);
-    if (!artist)
-      throw new UnprocessableEntityException(`Artist with id ${id} not found`);
+    // const artist = this.favoritesRepository.getArtist(id);
+    // if (!artist)
+    //   throw new UnprocessableEntityException(`Artist with id ${id} not found`);
 
     this.favoritesRepository.addArtistToFavorites(id);
   }
@@ -27,9 +23,9 @@ export class FavoritesService {
   addAlbumToFavorites(id: string) {
     isValidId(id);
 
-    const album = this.favoritesRepository.getAlbum(id);
-    if (!album)
-      throw new UnprocessableEntityException(`Album with id ${id} not found`);
+    // const album = this.favoritesRepository.getAlbum(id);
+    // if (!album)
+    //   throw new UnprocessableEntityException(`Album with id ${id} not found`);
 
     this.favoritesRepository.addAlbumToFavorites(id);
   }
@@ -37,9 +33,9 @@ export class FavoritesService {
   addTrackToFavorites(id: string) {
     isValidId(id);
 
-    const track = this.favoritesRepository.getTrack(id);
-    if (!track)
-      throw new UnprocessableEntityException(`Track with id ${id} not found`);
+    // const track = this.favoritesRepository.getTrack(id);
+    // if (!track)
+    //   throw new UnprocessableEntityException(`Track with id ${id} not found`);
 
     this.favoritesRepository.addTrackToFavorites(id);
   }
@@ -47,8 +43,8 @@ export class FavoritesService {
   deleteArtistFromFavorites(id: string) {
     isValidId(id);
 
-    const artist = this.favoritesRepository.getArtist(id);
-    if (!artist) throw new NotFoundException(`Artist with id ${id} not found`);
+    // const artist = this.favoritesRepository.getArtist(id);
+    // if (!artist) throw new NotFoundException(`Artist with id ${id} not found`);
 
     this.favoritesRepository.deleteArtistFromFavorites(id);
   }
@@ -56,8 +52,8 @@ export class FavoritesService {
   deleteAlbumFromFavorites(id: string) {
     isValidId(id);
 
-    const album = this.favoritesRepository.getAlbum(id);
-    if (!album) throw new NotFoundException(`Album with id ${id} not found`);
+    // const album = this.favoritesRepository.getAlbum(id);
+    // if (!album) throw new NotFoundException(`Album with id ${id} not found`);
 
     this.favoritesRepository.deleteAlbumFromFavorites(id);
   }
@@ -65,8 +61,8 @@ export class FavoritesService {
   deleteTrackFromFavorites(id: string) {
     isValidId(id);
 
-    const track = this.favoritesRepository.getTrack(id);
-    if (!track) throw new NotFoundException(`Track with id ${id} not found`);
+    // const track = this.favoritesRepository.getTrack(id);
+    // if (!track) throw new NotFoundException(`Track with id ${id} not found`);
 
     this.favoritesRepository.deleteTrackFromFavorites(id);
   }

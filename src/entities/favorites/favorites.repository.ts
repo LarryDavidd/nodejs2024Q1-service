@@ -1,11 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  Album,
-  Artist,
-  Favorites,
-  FavoritesResponse,
-  Track,
-} from '@/utils/types';
+import { Album, Artist, Favorites, Track } from '@/utils/types';
 import { PrismaService } from '@/entities/prisma/prisma.service';
 
 @Injectable()
@@ -29,12 +23,8 @@ export class FavoritesRepository {
   }
 
   async addTrackToFavorites(id: string) {
-    const favorites = await this.prisma.favorites.findFirst({
-      include: {
-        tracks: true,
-      },
-    });
-    return await favorites.update({
+    return await this.prisma.favorites.update({
+      where: { id: '1' },
       data: {
         tracks: {
           connect: {
@@ -46,12 +36,8 @@ export class FavoritesRepository {
   }
 
   async addAlbumToFavorites(id: string) {
-    const favorites = await this.prisma.favorites.findFirst({
-      include: {
-        albums: true,
-      },
-    });
-    return await favorites.update({
+    return await this.prisma.favorites.update({
+      where: { id: '1' },
       data: {
         albums: {
           connect: {
@@ -63,12 +49,8 @@ export class FavoritesRepository {
   }
 
   async addArtistToFavorites(id: string) {
-    const favorites = await this.prisma.favorites.findFirst({
-      include: {
-        artists: true,
-      },
-    });
-    return await favorites.update({
+    return await this.prisma.favorites.update({
+      where: { id: '1' },
       data: {
         artists: {
           connect: {
@@ -80,12 +62,8 @@ export class FavoritesRepository {
   }
 
   async deleteTrackFromFavorites(id: string) {
-    const favorites = await this.prisma.favorites.findFirst({
-      include: {
-        tracks: true,
-      },
-    });
-    return favorites.update({
+    return this.prisma.favorites.update({
+      where: { id: '1' },
       data: {
         tracks: {
           disconnect: {
@@ -97,12 +75,8 @@ export class FavoritesRepository {
   }
 
   async deleteAlbumFromFavorites(id: string) {
-    const favorites = await this.prisma.favorites.findFirst({
-      include: {
-        albums: true,
-      },
-    });
-    return favorites.update({
+    return this.prisma.favorites.update({
+      where: { id: '1' },
       data: {
         albums: {
           disconnect: {
@@ -114,12 +88,8 @@ export class FavoritesRepository {
   }
 
   async deleteArtistFromFavorites(id: string) {
-    const favorites = await this.prisma.favorites.findFirst({
-      include: {
-        artists: true,
-      },
-    });
-    return favorites.update({
+    return this.prisma.favorites.update({
+      where: { id: '1' },
       data: {
         artists: {
           disconnect: {

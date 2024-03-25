@@ -8,7 +8,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { getHashPassword, isPasswordCorrect } from '@/utils/hash';
 import isValidId from '@/utils/isValidId';
-import { User } from '@/utils/types';
 
 @Injectable()
 export class UserService {
@@ -16,12 +15,12 @@ export class UserService {
 
   async getUsers() {
     const users = await this.userRepository.getUsers();
-    return users.map((user: User) => {
+    return users.map((user) => {
       return this.getUserWithoutPassword(user);
     });
   }
 
-  private getUserWithoutPassword(user: User) {
+  private getUserWithoutPassword(user) {
     const { password, ...rest } = user;
     return {
       ...rest,
@@ -63,7 +62,7 @@ export class UserService {
       id,
       newPassword,
     );
-    return this.getUser(updatedUser);
+    return this.getUserWithoutPassword(updatedUser);
   }
 
   async deleteUser(id: string) {
