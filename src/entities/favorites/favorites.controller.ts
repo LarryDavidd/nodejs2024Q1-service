@@ -15,7 +15,7 @@ export class FavoritesController {
 
   @Get()
   getFavorites() {
-    return this.favoritesService.findFavorites();
+    return this.favoritesService.getFavorites();
   }
 
   @Post('artist/:id')

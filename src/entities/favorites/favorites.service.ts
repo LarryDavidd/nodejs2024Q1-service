@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { FavoritesRepository } from './favorites.repository';
 import isValidId from '@/utils/isValidId';
 
@@ -6,64 +10,76 @@ import isValidId from '@/utils/isValidId';
 export class FavoritesService {
   constructor(private readonly favoritesRepository: FavoritesRepository) {}
 
-  findFavorites() {
+  getFavorites() {
     return this.favoritesRepository.getFavorites();
   }
 
-  addArtistToFavorites(id: string) {
+  async addArtistToFavorites(id: string) {
     isValidId(id);
 
-    // const artist = this.favoritesRepository.getArtist(id);
-    // if (!artist)
-    //   throw new UnprocessableEntityException(`Artist with id ${id} not found`);
+    const artist = (await this.favoritesRepository.getArtists()).find(
+      (artist) => artist.id === id,
+    );
+    if (!artist)
+      throw new UnprocessableEntityException(`Artist with id ${id} not found`);
 
-    this.favoritesRepository.addArtistToFavorites(id);
+    return await this.favoritesRepository.addArtistToFavorites(id);
   }
 
-  addAlbumToFavorites(id: string) {
+  async addAlbumToFavorites(id: string) {
     isValidId(id);
 
-    // const album = this.favoritesRepository.getAlbum(id);
-    // if (!album)
-    //   throw new UnprocessableEntityException(`Album with id ${id} not found`);
+    const album = (await this.favoritesRepository.getAlbums()).find(
+      (album) => album.id === id,
+    );
+    if (!album)
+      throw new UnprocessableEntityException(`Album with id ${id} not found`);
 
-    this.favoritesRepository.addAlbumToFavorites(id);
+    return await this.favoritesRepository.addAlbumToFavorites(id);
   }
 
-  addTrackToFavorites(id: string) {
+  async addTrackToFavorites(id: string) {
     isValidId(id);
 
-    // const track = this.favoritesRepository.getTrack(id);
-    // if (!track)
-    //   throw new UnprocessableEntityException(`Track with id ${id} not found`);
+    const track = (await this.favoritesRepository.getTracks()).find(
+      (track) => track.id === id,
+    );
+    if (!track)
+      throw new UnprocessableEntityException(`Track with id ${id} not found`);
 
-    this.favoritesRepository.addTrackToFavorites(id);
+    return await this.favoritesRepository.addTrackToFavorites(id);
   }
 
-  deleteArtistFromFavorites(id: string) {
+  async deleteArtistFromFavorites(id: string) {
     isValidId(id);
 
-    // const artist = this.favoritesRepository.getArtist(id);
-    // if (!artist) throw new NotFoundException(`Artist with id ${id} not found`);
+    const artist = (await this.favoritesRepository.getFavoritesArtists()).find(
+      (artist) => artist.id === id,
+    );
+    if (!artist) throw new NotFoundException(`Artist with id ${id} not found`);
 
-    this.favoritesRepository.deleteArtistFromFavorites(id);
+    return await this.favoritesRepository.deleteArtistFromFavorites(id);
   }
 
-  deleteAlbumFromFavorites(id: string) {
+  async deleteAlbumFromFavorites(id: string) {
     isValidId(id);
 
-    // const album = this.favoritesRepository.getAlbum(id);
-    // if (!album) throw new NotFoundException(`Album with id ${id} not found`);
+    const album = (await this.favoritesRepository.getFavoritesAlbums()).find(
+      (album) => album.id === id,
+    );
+    if (!album) throw new NotFoundException(`Album with id ${id} not found`);
 
-    this.favoritesRepository.deleteAlbumFromFavorites(id);
+    return await this.favoritesRepository.deleteAlbumFromFavorites(id);
   }
 
-  deleteTrackFromFavorites(id: string) {
+  async deleteTrackFromFavorites(id: string) {
     isValidId(id);
 
-    // const track = this.favoritesRepository.getTrack(id);
-    // if (!track) throw new NotFoundException(`Track with id ${id} not found`);
+    const track = (await this.favoritesRepository.getFavoritesTracks()).find(
+      (track) => track.id === id,
+    );
+    if (!track) throw new NotFoundException(`Track with id ${id} not found`);
 
-    this.favoritesRepository.deleteTrackFromFavorites(id);
+    return await this.favoritesRepository.deleteTrackFromFavorites(id);
   }
 }
