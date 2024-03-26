@@ -5,5 +5,5 @@ export function getHashPassword(password: string) {
 }
 
 export function isPasswordCorrect(password: string, hash: string) {
-  return password;
+  return password === hash;
 }

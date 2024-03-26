@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ArtistRepository } from './artist.repository';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
@@ -41,7 +37,6 @@ export class ArtistService {
 
   private async getArtistIfExist(id: string) {
     const artist = await this.artistRepository.getArtist(id);
-    if (!artist) throw new NotFoundException('Artist not found');
     return artist;
   }
 

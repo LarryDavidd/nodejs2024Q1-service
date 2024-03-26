@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { AlbumRepository } from './album.repository';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
@@ -43,7 +39,6 @@ export class AlbumService {
 
   private async getAlbumIfExist(id: string) {
     const album = await this.albumRepository.getAlbum(id);
-    if (!album) throw new NotFoundException(`Album ${id} not found`);
     return album;
   }
 

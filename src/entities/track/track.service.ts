@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { TrackRepository } from './track.repository';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
@@ -43,7 +39,6 @@ export class TrackService {
 
   private async getTrackIfExist(id: string) {
     const track = await this.trackRepository.getTrack(id);
-    if (!track) throw new NotFoundException(`Track with id ${id} not found`);
     return track;
   }
 

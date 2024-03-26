@@ -56,7 +56,7 @@ export class UserService {
     this.isValidId(id);
     const user = await this.checkUserExists(id);
 
-    if (await isPasswordCorrect(oldPassword, user.password))
+    if (!isPasswordCorrect(oldPassword, user.password))
       throw new ForbiddenException('Wrong password');
 
     const updatedUser = await this.userRepository.updateUserPassword(
