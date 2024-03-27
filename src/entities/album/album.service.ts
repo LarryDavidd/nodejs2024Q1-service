@@ -1,38 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { AlbumRepository } from './album.repository';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import isValidId from '@/utils/isValidId';
-import { Album } from '@/utils/types';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class AlbumService {
   constructor(private readonly albumRepository: AlbumRepository) {}
 
-  getAlbums(): Album[] {
-    return this.albumRepository.getAlbums();
+  async getAlbums() {
+    return await this.albumRepository.getAlbums();
   }
 
-  getAlbum(id: string): Album {
-    isValidId(id);
-    const album = this.albumRepository.getAlbum(id);
+  async getAlbum(id: string) {
+    this.isValidId(id);
+    const album = await this.albumRepository.getAlbum(id);
 
     return album;
   }
 
-  createAlbum(albumData: CreateAlbumDto): Album {
-    return this.albumRepository.createAlbum(albumData);
+  async createAlbum(albumData: CreateAlbumDto) {
+    return await this.albumRepository.createAlbum(albumData);
   }
 
-  updateAlbum(id: string, albumData: UpdateAlbumDto): Album {
-    isValidId(id);
+  async updateAlbum(id: string, albumData: UpdateAlbumDto) {
+    this.isValidId(id);
+    await this.getAlbumIfExist(id);
 
     return this.albumRepository.updateAlbum(id, albumData);
   }
 
-  deleteAlbum(id: string) {
-    isValidId(id);
+  async deleteAlbum(id: string) {
+    this.isValidId(id);
+    await this.getAlbumIfExist(id);
 
     return this.albumRepository.deleteAlbum(id);
   }
+
+  private async getAlbumIfExist(id: string) {
+    const album = await this.albumRepository.getAlbum(id);
+    return album;
+  }
+
+  private isValidId = (id: string) => {
+    if (!isUUID(id)) throw new BadRequestException(`Invalid id ${id}`);
+  };
 }

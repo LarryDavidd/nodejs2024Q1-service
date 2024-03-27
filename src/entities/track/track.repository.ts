@@ -1,47 +1,29 @@
-import { v4 as uuid } from 'uuid';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Injectable } from '@nestjs/common';
-import { StoreService } from '@/store/track/store.service';
-import { Track } from '@/utils/types';
+import { PrismaService } from '@/entities/prisma/prisma.service';
 
 @Injectable()
 export class TrackRepository {
-  constructor(private readonly storeService: StoreService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  getTracks(): Track[] {
-    return this.storeService.getTracks();
+  async getTracks() {
+    return await this.prisma.track.findMany();
   }
 
-  getTrack(id: string): Track {
-    return this.storeService.getTrack(id);
+  async getTrack(id: string) {
+    return await this.prisma.track.findUnique({ where: { id } });
   }
 
-  createTrack(trackData: CreateTrackDto): Track {
-    const newTrack: Track = {
-      id: uuid(),
-      name: trackData.name,
-      artistId: trackData.artistId,
-      albumId: trackData.albumId,
-      duration: trackData.duration,
-    };
-    this.storeService.createTrack(newTrack);
-    return newTrack;
+  async createTrack(trackData: CreateTrackDto) {
+    return await this.prisma.track.create({ data: trackData });
   }
 
-  updateTrackInfo(id: string, trackData: UpdateTrackDto): Track {
-    const track: Track = {
-      id,
-      name: trackData.name,
-      artistId: trackData.artistId,
-      albumId: trackData.albumId,
-      duration: trackData.duration,
-    };
-    this.storeService.updateTrack(track);
-    return track;
+  async updateTrackInfo(id: string, trackData: UpdateTrackDto) {
+    return await this.prisma.track.update({ where: { id }, data: trackData });
   }
 
-  deleteTrack(id: string): boolean {
-    return this.storeService.deleteTrack(id);
+  async deleteTrack(id: string) {
+    return await this.prisma.track.delete({ where: { id } });
   }
 }

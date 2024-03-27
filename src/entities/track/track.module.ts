@@ -3,10 +3,11 @@ import { TrackController } from './track.controller';
 import { TrackService } from './track.service';
 import { TrackRepository } from './track.repository';
 import { StoreModule } from '@/store/track/store.module';
+import { PrismaModule } from '@/entities/prisma/prisma.module';
 
 @Module({
   providers: [TrackRepository, TrackService],
   controllers: [TrackController],
-  imports: [StoreModule],
+  imports: [StoreModule, PrismaModule],
 })
 export class TrackModule {}

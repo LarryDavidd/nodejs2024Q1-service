@@ -8,19 +8,41 @@
 ## Downloading
 
 ```
-git clone https://github.com/LarryDavidd/nodejs2024Q1-service
+git clone  https://github.com/LarryDavidd/nodejs2023Q2-service.git
+```
+
+Switch to branch part-2:
+
+```
+git checkout part-2
 ```
 
 ## Installing NPM modules
 
+To install NPM modules, use the command:
+
 ```
-npm install --legacy-peer-deps
+npm install
+```
+
+## .env setting
+
+In the absence of an .env file in the project's main directory, it is necessary to duplicate the .env.example file and rename it as .env.
+
+## Docker
+
+Should Docker not be installed by this stage, proceed to download, install, and initiate the Docker Desktop application.
+
+## Vulnerabilities scanning
+
+```
+npm run docker:scan
 ```
 
 ## Running application
 
 ```
-npm start
+docker compose up
 ```
 
 After starting the app on port (4000 as default) you can open

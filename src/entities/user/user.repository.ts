@@ -1,40 +1,34 @@
-import { v4 as uuid } from 'uuid';
 import { Injectable } from '@nestjs/common';
-import { StoreService } from '@/store/user/store.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from '@/utils/types';
+import { PrismaService } from '@/entities/prisma/prisma.service';
 
 @Injectable()
 export class UserRepository {
-  constructor(private readonly storeService: StoreService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  getUsers(): User[] {
-    return this.storeService.getUsers();
+  async getUsers() {
+    return await this.prisma.user.findMany();
   }
 
-  getUser(id: string): User {
-    return this.storeService.getUser(id);
+  async getUser(id: string) {
+    return await this.prisma.user.findUnique({ where: { id } });
   }
 
-  createUser(userData: CreateUserDto): User {
-    const newUser: User = {
-      id: uuid(),
-      login: userData.login,
-      password: userData.password,
-      version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-    this.storeService.createUser(newUser);
-    return newUser;
+  async createUser(userData: CreateUserDto) {
+    return await this.prisma.user.create({ data: userData });
   }
 
-  updateUserPassword(id: string, newPassword: string): User {
-    const user = this.storeService.changePassword(id, newPassword);
-    return user;
+  async updateUserPassword(id: string, newPassword: string) {
+    return await this.prisma.user.update({
+      where: { id },
+      data: {
+        password: newPassword,
+        version: { increment: 1 },
+      },
+    });
   }
 
-  deleteUser(id: string): boolean {
-    return this.storeService.deleteUser(id);
+  async deleteUser(id: string) {
+    return await this.prisma.user.delete({ where: { id } });
   }
 }

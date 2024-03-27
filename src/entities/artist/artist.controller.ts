@@ -1,45 +1,131 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
-  HttpStatus,
   Param,
   Post,
+  Body,
+  Delete,
+  HttpException,
   Put,
+  UsePipes,
+  ValidationPipe,
+  ParseUUIDPipe,
 } from '@nestjs/common';
+import { StatusCodes } from 'http-status-codes';
+import {
+  ApiOperation,
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiNoContentResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
+import { Artist } from '@prisma/client';
+import { UpdateArtistDto } from './dto/update-artist.dto';
 
+@ApiBearerAuth()
 @Controller('artist')
 export class ArtistController {
-  constructor(private readonly artistService: ArtistService) {}
+  constructor(private artistService: ArtistService) {}
 
+  /**
+   * Get all artists
+   */
   @Get()
-  getAll() {
+  @ApiOperation({ summary: 'Get all artists' })
+  getArtists() {
     return this.artistService.getArtists();
   }
 
+  /**
+   * Get artist by id
+   */
   @Get(':id')
-  getOne(@Param('id') id: string) {
-    return this.artistService.getArtist(id);
+  @ApiOperation({ summary: 'Get artist' })
+  @ApiBadRequestResponse({
+    description: 'Bad request. Id is invalid (not uuid)',
+  })
+  @ApiNotFoundResponse({ description: 'Artist with this id does not exist' })
+  async getArtistById(@Param('id', new ParseUUIDPipe()) id: string) {
+    const artist = await this.artistService.getArtist(id);
+    if (!artist) {
+      throw new HttpException(
+        'Artist with this id does not exist',
+        StatusCodes.NOT_FOUND,
+      );
+    }
+    return artist;
   }
 
+  /**
+   * Create new artist
+   */
   @Post()
-  @HttpCode(HttpStatus.CREATED)
-  create(@Body() body: CreateArtistDto) {
-    return this.artistService.createArtist(body);
+  @ApiOperation({ summary: 'Create artist' })
+  @ApiBadRequestResponse({
+    description: ' Bad request. Body does not contain required fields',
+  })
+  @UsePipes(new ValidationPipe())
+  createArtist(@Body() createArtistDto: CreateArtistDto): Promise<Artist> {
+    return this.artistService.createArtist(createArtistDto);
   }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() body: CreateArtistDto) {
-    return this.artistService.updateArtist(id, body);
-  }
-
+  /**
+   * Delete artist by id
+   */
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  delete(@Param('id') id: string) {
-    return this.artistService.deleteArtist(id);
+  @HttpCode(204)
+  @ApiOperation({ summary: 'Delete artist' })
+  @ApiNoContentResponse({
+    description: 'The artist has been deleted',
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad request. Id is invalid (not uuid)',
+  })
+  @ApiNotFoundResponse({ description: 'Artist with this id does not exist' })
+  async deleteArtistById(@Param('id', new ParseUUIDPipe()) id: string) {
+    try {
+      const artist = await this.artistService.deleteArtist(id);
+      return artist;
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        throw new HttpException(
+          'Artist with this id does not exist',
+          StatusCodes.NOT_FOUND,
+        );
+      }
+      throw e;
+    }
+  }
+
+  /**
+   * Update artist by id
+   */
+  @Put(':id')
+  @ApiOperation({ summary: 'Update artist' })
+  @ApiBadRequestResponse({
+    description: 'Bad request. Id is invalid (not uuid)',
+  })
+  @ApiNotFoundResponse({ description: 'Artist with this id does not exist' })
+  @UsePipes(new ValidationPipe())
+  async updateArtist(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateArtistDto: UpdateArtistDto,
+  ) {
+    try {
+      const artist = await this.artistService.updateArtist(id, updateArtistDto);
+      return artist;
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        throw new HttpException(
+          'Artist with this id does not exist',
+          StatusCodes.NOT_FOUND,
+        );
+      }
+      throw e;
+    }
   }
 }
